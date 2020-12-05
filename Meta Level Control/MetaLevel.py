@@ -1,0 +1,38 @@
+import time
+
+def mlc(A, phi, C, ct):
+    ''' Returns solution of anytime algorithm at optimal stopping point
+
+    :param A: Anytime algorithm
+    :type A: object
+
+    :param phi: performance predictor
+    :type phi: object
+
+    :param C: stopping condition
+    :type C: method
+
+    :param ct: time interval
+    :type ct: float 
+
+    :return alpha: current solution 
+    :type alpha: float
+    '''
+
+    t = 0   # initialize time as 'o'
+    h = []  # vector for performance history
+    A.start()   # start the anytime algorithm
+
+    while A== True: # while anytime algorithm is running 
+        alpha = A.current_solution() # Take the current solution 
+        q = alpha.quality() # Check quality of solution
+        h = h.append(q) # Add to performance history vector 
+        p = phi(h)  # predict the performance
+
+        if C(p): # if stop condition is met for performance predictor 
+            A.stop() # stop the anytime algorithm and return the current alpha
+            return alpha 
+        
+        t = t+ ct # sync time 
+        time.sleep(ct)
+    return alpha
