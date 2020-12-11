@@ -1,5 +1,10 @@
 import time
 
+
+
+def phi(h):
+
+
 def mlc(A, phi, C, ct):
     ''' Returns solution of anytime algorithm at optimal stopping point
 
@@ -20,7 +25,7 @@ def mlc(A, phi, C, ct):
     '''
 
     t = 0   # initialize time as 'o'
-    h = []  # vector for performance history
+    h = [3,2,1,2,1]  # vector for performance history
     A.start()   # start the anytime algorithm
 
     while A== True: # while anytime algorithm is running 
@@ -36,3 +41,8 @@ def mlc(A, phi, C, ct):
         t = t+ ct # sync time 
         time.sleep(ct)
     return alpha
+
+import mlc
+
+    mlc(utility)
+    mlc.start()
