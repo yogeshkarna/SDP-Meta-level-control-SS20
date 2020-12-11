@@ -48,8 +48,6 @@ def get_myopic_projected_stopping_point(qualities, steps, limit):
             current_time_cost = time_cost(end - 1, 0.075)
             current_comprehensive_value = utility_function(current_intrinsic_value, current_time_cost)
 
-
-
             next_intrinsic_value = intrinsic_value_function(projections[end], 100)
             next_time_cost = time_cost(end, 0.75)
             next_comprehensive_value = utility_function(next_intrinsic_value, next_time_cost)

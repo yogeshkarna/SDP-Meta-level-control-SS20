@@ -6,3 +6,8 @@
 3. Yogeshkarna Govindaraj
 
 Reference: Svegliato, J., Wray, K. H., & Zilberstein, S. (2018). Meta-level control of anytime algorithms with online performance prediction. In IJCAI International Joint Conference on Artificial Intelligence (Vols. 2018-July). https://doi.org/10.24963/ijcai.2018/208 
+
+Workspace 
+- /data contains anytime algorithm quality acqired in '.json' format
+- /plots contains plots of meta-level control algorithm 
+- mlc.py contains the python program for meta-level control 
