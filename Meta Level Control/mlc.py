@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.optimize import curve_fit
 import matplotlib.pyplot as plt
+import matplotlib
 import json
 
 # def get_instances(filename):
@@ -102,6 +103,12 @@ if __name__ == "__main__":
 
     #plotting 
     plt.figure(figsize=(16, 12), dpi=80)
+    font = {'family' : 'normal',
+        'weight' : 'bold',
+        'size'   : 22}
+
+    matplotlib.rc('font', **font)
+
     file_path = 'plots/myopic' + '.png'
     plt.title('Performance Profile')
     plt.xlabel('Time')
