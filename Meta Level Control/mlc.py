@@ -4,118 +4,128 @@ import matplotlib.pyplot as plt
 import matplotlib
 import json
 
-# def get_instances(filename):
-#     with open(filename) as file:
-#         return json.load(file)
+class MetaLevelControl():
+    ''' Meta Level Control Class'''
+    def __init__(self, time_duration, num_of_steps, intrinsic_value_multiplier, time_cost_multiplier):
+        
+        self.time_duration = time_duration
+        self.num_of_steps = num_of_steps
+        self.intrinsic_value_multiplier = intrinsic_value_multiplier
+        self.time_cost_multiplier = time_cost_multiplier
 
-def intrinsic_value_function(qualities, multiplier):
-    # intrinsic_value = qualities*multiplier
-    return np.multiply(multiplier, qualities)
+        self.utility = 0
+        self.next_utility = 0
+        self.current_utility = 0
 
-
-def time_cost(steps, multiplier):
-    return np.exp(np.multiply(multiplier, steps))
-
-
-def utility_function(instrinsic_values, time_costs):
-    return instrinsic_values - time_costs
-
-def non_stopping_point(comprehensive_values):
-    # df = pd.Dataframe(comprehensive_values)
-    # stopping_point = df['estmated_values'][comprehensive_values]
-    return list(comprehensive_values).index(max(comprehensive_values))
+    def intrinsic_value_function(self, qualities, cost):
+        ''' Finding the intrinsic values of the qualities. '''
+        return np.multiply(cost, qualities)
 
 
-def get_myopic_projected_stopping_point(qualities, steps, limit):
-    intrinsic_value_groups = []
-    stopping_point = limit - 1
+    def cost_of_time(self, number_of_steps, cost):
+        ''' Computing the cost of time. '''
+        return np.exp(np.multiply(cost, number_of_steps))
 
-    model = lambda x, a, b, c: a * np.arctan(x + b) + c
 
-    for end in range(10, limit):
+    def utility_function(self, instrinsic_value, cost_of_time):
+        ''' Computing the Utility function as difference between intrinsic value and cost of time. '''
+        return instrinsic_value - cost_of_time
+
+
+    def fit(self, qualities):
+        ''' Fit and predict the myopic stopping point '''
+        
+        self.qualities = qualities
+        self.stop_point = self.time_duration - 1
+
+        # 
+        performance_model = lambda x, a, b, c: a * np.arctan(x + b) + c
+
         try:
+            if len(qualities) < 10:
+                return self.stop_point, 0, False
+
+            
             start = 0
-            params, _ = curve_fit(model, steps[start:end], qualities[start:end])
-            projections = model(steps, params[0], params[1], params[2])
+            end = len(qualities)
+            
+            parameters, _ = curve_fit(performance_model, self.num_of_steps[start:end], self.qualities[start:end])
+            performance_projections = performance_model(self.num_of_steps, parameters[0], parameters[1], parameters[2])
 
-            intrinsic_values = intrinsic_value_function(projections, 100)
-            time_costs = time_cost(steps, 0.075)
-            comprehensive_values = utility_function(intrinsic_values, time_costs)
+            ''' Replace Temp with Query 
+            Instead of using 2 variables to store the intermediate temp variables, we provide a query'''
+            # intrinsic_values = self.intrinsic_value_function(performance_projections, self.intrinsic_value_multiplier)
+            # time_costs = self.cost_of_time(self.num_of_steps, self.time_cost_multiplier)
+            # utility = self.utility_function(intrinsic_values, time_costs)
+            self.utility = self.utility_function(self.intrinsic_value_function(performance_projections, self.intrinsic_value_multiplier), self.cost_of_time(self.num_of_steps, self.time_cost_multiplier))
 
-            intrinsic_value_groups.append(intrinsic_values)
+            # current_intrinsic_value = self.intrinsic_value_function(self.qualities[end - 1], self.intrinsic_value_multiplier)
+            # current_time_cost = self.cost_of_time(end - 1, self.time_cost_multiplier)
+            # current_utility = self.utility_function(current_intrinsic_value, current_time_cost)
+            self.current_utility = self.utility_function(self.intrinsic_value_function(self.qualities[end - 1], self.intrinsic_value_multiplier), self.cost_of_time(end - 1, self.time_cost_multiplier))
 
-            # current_comprehensive_value = intrinsic_value_function(qualities[end - 1], 100) - time_cost(end - 1, 0.075)
-            current_intrinsic_value = intrinsic_value_function(qualities[end - 1], 100)
-            current_time_cost = time_cost(end - 1, 0.075)
-            current_comprehensive_value = utility_function(current_intrinsic_value, current_time_cost)
 
-            next_intrinsic_value = intrinsic_value_function(projections[end], 100)
-            next_time_cost = time_cost(end, 0.75)
-            next_comprehensive_value = utility_function(next_intrinsic_value, next_time_cost)
+            # next_intrinsic_value = self.intrinsic_value_function(performance_projections[end], self.intrinsic_value_multiplier)
+            # next_time_cost = self.cost_of_time(end, self.time_cost_multiplier)
+            # next_utility = self.utility_function(next_intrinsic_value, next_time_cost)
+            self.next_utility = self.utility_function(self.intrinsic_value_function(performance_projections[end], self.intrinsic_value_multiplier), self.cost_of_time(end, self.time_cost_multiplier))
 
             #checking if the condition for stopping is satified or not
-            if next_comprehensive_value - current_comprehensive_value <= 0:
-
-                return end - 1, comprehensive_values
+            if self.next_utility - self.current_utility <= 0:
+                return end - 1, self.utility, True
         except Exception as e:
             pass
-    return stopping_point
+        return self.stop_point, 0, False
 
 
-def get_nonmyopic_projected_stopping_point(qualities, steps, limit):
-    stopping_point = 0
+    def plotting(self, path, myopic_stopping_point, utility):
+        ''' Plotting the '''
+        plt.figure(figsize=(16, 12), dpi=80)
+        font = {
+            # 'family' : 'normal',
+            'weight' : 'bold',
+            'size'   : 23}
 
-    model = lambda x, a, b, c: a * np.arctan(x + b) + c
-
-    for end in range(10, limit):
-        try:
-            start = 0
-
-            params, temp = curve_fit(model, steps[start:end], qualities[start:end])
-            projections = model(steps, params[0], params[1], params[2])
-
-            intrinsic_values = intrinsic_value_function(projections, 100)
-            time_costs = time_cost(steps, 0.075)
-            comprehensive_values = utility_function(intrinsic_values, time_costs)
-            stopping_point = non_stopping_point(comprehensive_values)
-
-
-            if stopping_point < end - 1:
-                return end - 1
-        except Exception as e:
-            pass
-
-    return stopping_point
+        matplotlib.rc('font', **font)
+        plt.title('Performance Profile of the solution')
+        plt.xlabel('Time taken')
+        plt.ylabel('Value incurred')
+        plt.plot(self.num_of_steps, utility, color='k', label='Utility function')
+        plt.scatter([myopic_stopping_point], utility[myopic_stopping_point], color='m', label='Projected Stopping Point for Myopic')
+        plt.legend()
+        plt.savefig(path)
+        plt.close()
 
 
+# if __name__ == "__main__":
 
-if __name__ == "__main__":
+#     # with open('data/tsp.json') as file:
+#     with open('C:/Users/alex0/Desktop/HBRS/Semester 2/SDP/Git/SDP-Meta-level-control-SS20/Meta Level Control/data/data.json') as file:
+#         data = json.load(file)
 
-    #loading data 
-    with open('data/tsp.json') as file:
-        instance = json.load(file)
-    qualities_n= instance['instance-0']['estimated_qualities']
-    time_limit = len(qualities_n)
-    steps = range(time_limit)
+#     qualities= data['instance-0']['qualities']
+#     time_duration = len(qualities)
+#     num_of_steps = range(time_duration)
 
-    #myopic stopping condition
-    myopic_p_stopping_point, comprehensive_values= get_myopic_projected_stopping_point(qualities_n, steps, time_limit)
+#     ##################
 
-    #plotting 
-    plt.figure(figsize=(16, 12), dpi=80)
-    font = {'family' : 'normal',
-        'weight' : 'bold',
-        'size'   : 22}
 
-    matplotlib.rc('font', **font)
+#     intrinsic_value_multiplier = 100
+#     # time_cost_multiplier = 0.01
+#     time_cost_multiplier = 0.075
+#     # time_cost_multiplier = 0.08
+#     MLC = MetaLevelControl(time_duration, num_of_steps, intrinsic_value_multiplier, time_cost_multiplier)
 
-    file_path = 'plots/myopic' + '.png'
-    plt.title('Performance Profile')
-    plt.xlabel('Time')
-    plt.ylabel('Value')
-    plt.plot(steps, comprehensive_values, color='k', label='Utility function')
-    plt.scatter([myopic_p_stopping_point], comprehensive_values[myopic_p_stopping_point], color='m', label='Myopic Projected Stopping Point')
-    plt.legend()
-    plt.savefig(file_path)
-    plt.close()
+
+#     # kmeans 
+#     for i in range(time_duration):
+#         qualities1 = qualities[0:i]
+#         #myopic stopping condition
+#         myopic_stopping_point, utility, condition = MLC.fit(qualities1)
+#         if condition == True:
+#             print(myopic_stopping_point, utility)
+#             break
+    
+#     path = 'C:/Users/alex0/Desktop/HBRS/Semester 2/SDP/Git/SDP-Meta-level-control-SS20/Meta Level Control/plots/myopic_kmeans_final2' + '.png'
+#     MLC.plotting(path, myopic_stopping_point, utility)
 
