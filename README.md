@@ -28,6 +28,18 @@ However, the exact specifications used by our team in developing the library are
 * Scipy (1.4.1)
 * Matplotlib (3.2.2)
 
+### User Installation
+The class MLC, given in MetaMLC.py is a stand-alone class which can imported and used as per needed along with any anytime algorithm.
+
+## Development
+
+### Source code
+The latest version of the meta level control library is available at:
+'git clone https://github.com/yogeshkarna/SDP-Meta-level-control-SS20.git'
+
+## Help and Support
+
+### Documentation
 
 Workspace 
 - /data contains anytime algorithm quality acqired in '.json' format
