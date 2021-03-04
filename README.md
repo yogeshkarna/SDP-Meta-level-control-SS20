@@ -41,7 +41,11 @@ The latest version of the meta level control library is available at:
 
 ### Documentation
 
+The documentation of each variable 
 Workspace 
 - /data contains anytime algorithm quality acqired in '.json' format
 - /plots contains plots of meta-level control algorithm 
-- mlc.py contains the python program for meta-level control 
+- mlc.py contains the python class for meta-level control
+
+### Communication
+
