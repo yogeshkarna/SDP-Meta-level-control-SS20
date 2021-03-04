@@ -13,6 +13,22 @@ Anytime algorithms are those algorithms which provide a trade-off between time o
 
 Previous work on meta-level control were primarily focused on significant amount of offline work, which made it infeasible for real-time problems. The task of preprocessing before initializing the anytime algorithm, requires  execution and evaluation of all the plausible instances of the use-case. This is computationaly expensive, time consuming and infeasible and incompatible with any changes to the problem in hand.
 
+## Installation
+
+### Dependencies
+Meta level control requires compatible versions of the following:
+* Python
+* Numpy
+* Scipy
+* Matplotlib
+
+However, the exact specifications used by our team in developing the library are as follows:
+* Python (3.9)
+* Numpy (1.19.4)
+* Scipy (1.4.1)
+* Matplotlib (3.2.2)
+
+
 Workspace 
 - /data contains anytime algorithm quality acqired in '.json' format
 - /plots contains plots of meta-level control algorithm 
