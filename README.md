@@ -35,7 +35,7 @@ The class MLC, given in MetaMLC.py is a stand-alone class which can imported and
 
 ### Source code
 The latest version of the meta level control library is available at:
-'git clone https://github.com/yogeshkarna/SDP-Meta-level-control-SS20.git'
+`git clone https://github.com/yogeshkarna/SDP-Meta-level-control-SS20.git`
 
 ## Help and Support
 
