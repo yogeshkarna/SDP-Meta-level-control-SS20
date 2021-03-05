@@ -10,7 +10,6 @@ class MetaLevelControl():
         self.next_utility = 0
         self.current_utility = 0
 
-
     '''----Separate Query for Modifier-----'''
     '''----Setters for changing the class variables.----'''
     def setMultipliers(self, intrinsic_value_multiplier, time_cost_multiplier):
@@ -86,7 +85,7 @@ class MetaLevelControl():
 
     '''----Extract Method---- '''
     '''----Code fragments that goes together are grouped together into a function.----'''
-    def plotting(self, path, myopic_stopping_point, utility):
+    def plotting(self, path, stopping_point, utility):
         ''' Plotting the accepted solution's performance profile. '''
         plt.figure(figsize=(18, 12), dpi=80)
         font = {
@@ -98,7 +97,7 @@ class MetaLevelControl():
         plt.ylabel('Value incurred')
         plt.title('Performance Profile of the solution')
         plt.plot(self.num_of_steps, utility, color='k', label='Utility function')
-        plt.scatter([myopic_stopping_point], utility[myopic_stopping_point], color='m', label='Projected Stopping Point for Myopic')
+        plt.scatter([stopping_point], utility[stopping_point], color='m', label='Projected Stopping Point for Myopic')
         plt.legend()
         plt.savefig(path)
         plt.close()
