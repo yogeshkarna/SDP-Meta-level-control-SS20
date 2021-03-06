@@ -23,14 +23,13 @@ if __name__ == "__main__":
     MLC.setMultipliers(intrinsic_value_multiplier, time_cost_multiplier)
     MLC.setStepInfo(time_duration, num_of_steps)
 
-
     # Simulating online anytime kmeans where each time step will have solution qualities from 0 to t time.  
     for i in range(time_duration):
-        qualities1 = qualities[0:i]
+        qualities_in_each_time_frame = qualities[0:i]
 
         #Myopic stopping condition
         model = lambda x, a, b, c: a * np.arctan(x + b) + c
-        myopic_stopping_point, utility, condition = MLC.fit(qualities1, model)
+        myopic_stopping_point, utility, condition = MLC.fit(qualities_in_each_time_frame, model)
         print(condition)
         if condition == True:
             print(myopic_stopping_point, utility)
